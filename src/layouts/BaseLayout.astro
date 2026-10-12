@@ -1,0 +1,74 @@
+---
+import '@fontsource/dm-sans/400.css';
+import '@fontsource/dm-sans/500.css';
+import '@fontsource/dm-sans/600.css';
+import '@fontsource/cormorant-garamond/400.css';
+import '@fontsource/cormorant-garamond/400-italic.css';
+import '../styles/global.css';
+import Mark from '../components/Mark.astro';
+import { siteName, indexable, defaultOgImage } from '../data/site';
+interface Props { title: string; description: string; home?: boolean; ogImage?: string }
+const { title, description, home = false, ogImage = defaultOgImage } = Astro.props;
+const path = Astro.url.pathname;
+const canonical = indexable && Astro.site ? new URL(path, Astro.site).href : undefined;
+const ogImageUrl = canonical && Astro.site ? new URL(ogImage, Astro.site).href : undefined;
+const fullTitle = `${title} — ${siteName}`;
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="robots" content={indexable ? 'index, follow' : 'noindex, nofollow'} />
+    <meta name="theme-color" content="#2c2d2e" />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{fullTitle}</title>
+    {canonical && <link rel="canonical" href={canonical} />}
+    {canonical && <meta property="og:type" content="website" />}
+    {canonical && <meta property="og:site_name" content={siteName} />}
+    {canonical && <meta property="og:title" content={fullTitle} />}
+    {canonical && <meta property="og:description" content={description} />}
+    {canonical && <meta property="og:url" content={canonical} />}
+    {ogImageUrl && <meta property="og:image" content={ogImageUrl} />}
+    {ogImageUrl && <meta name="twitter:card" content="summary_large_image" />}
+  </head>
+  <body class:list={[{ 'home-page': home }]}>
+    <a class="skip-link" href="#main">Skip to content</a>
+    <header class="site-header">
+      <a class="wordmark" href="/" aria-label="Rural Japan home"><Mark /><span>RURAL JAPAN<small>A DIFFERENT SIDE OF JAPAN</small></span></a>
+      <nav class="desktop-nav" aria-label="Main navigation">
+        <a href="/#places" aria-current={path.startsWith('/places/') ? 'page' : undefined}>Explore places <span aria-hidden="true">↗</span></a>
+        <a href="/about/" aria-current={path === '/about/' ? 'page' : undefined}>Our story</a>
+      </nav>
+      <span class="header-note">An invitation to slow down.</span>
+      <details class="mobile-nav">
+        <summary>Menu <span aria-hidden="true">＋</span></summary>
+        <nav aria-label="Mobile navigation">
+          <a href="/#places">Explore places <span aria-hidden="true">↗</span></a>
+          <a href="/about/">Our story</a>
+          <a href="/credits/">Photo credits</a>
+        </nav>
+      </details>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="footer-top">
+        <a class="wordmark" href="/" aria-label="Rural Japan home"><Mark /><span>RURAL JAPAN<small>A DIFFERENT SIDE OF JAPAN</small></span></a>
+        <p>Small places.<br /><em>Lasting impressions.</em></p>
+        <nav aria-label="Footer navigation"><a href="/#places">Explore places</a><a href="/about/">Our story</a><a href="/credits/">Photo credits</a></nav>
+      </div>
+      <div class="footer-bottom"><span>© {new Date().getFullYear()} RURAL JAPAN · Published by UGATTA</span><span>Independent travel guide</span><a href="#top" aria-label="Back to top">Back to top ↑</a></div>
+    </footer>
+    <script>
+      const menu = document.querySelector<HTMLDetailsElement>('.mobile-nav');
+      menu?.querySelectorAll('a').forEach(link => link.addEventListener('click', () => { menu.open = false; }));
+      document.addEventListener('keydown', event => {
+        if (event.key === 'Escape' && menu?.open) {
+          menu.open = false;
+          menu.querySelector('summary')?.focus();
+        }
+      });
+    </script>
+  </body>
+</html>

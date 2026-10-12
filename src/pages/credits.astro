@@ -1,0 +1,11 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import photos from '../data/photos.json';
+const locations = [...new Set(photos.map((photo) => photo.location))];
+const locationText = locations.length === 1 ? locations[0] : `${locations.slice(0, -1).join(', ')} and ${locations.at(-1)}`;
+---
+<BaseLayout title="Photo credits" description="Photography sources, creators and reuse licenses for RURAL JAPAN.">
+  <section class="credits-opening section-wrap" id="top"><p class="eyebrow">THE PEOPLE BEHIND THE PICTURES</p><h1>Photo <em>credits.</em></h1><p>All photographs on this site depict {locationText}. We are grateful to the photographers who share their work. Each image retains its own license.</p></section>
+  <div class="credits-list section-wrap">{photos.map((photo) => <article id={photo.id} class="credit-item"><img src={photo.src} srcset={`${photo.srcSmall} 800w, ${photo.src} ${photo.width}w`} sizes="(max-width: 760px) 100vw, 45vw" alt={photo.alt} width={photo.width} height={photo.height} loading="lazy" /><div><p class="eyebrow">{photo.location}</p><h2>{photo.title}</h2><dl><div><dt>Photographer</dt><dd><a href={photo.authorUrl}>{photo.author} ↗</a></dd></div><div><dt>Photographed</dt><dd>{photo.capturedAt}</dd></div><div><dt>License</dt><dd><a href={photo.licenseUrl}>{photo.license} ↗</a></dd></div><div><dt>Source</dt><dd><a href={photo.sourceUrl}>Original file on Wikimedia Commons ↗</a></dd></div><div><dt>Changes</dt><dd>{photo.changes}</dd></div><div><dt>Verified</dt><dd>{photo.verifiedAt}</dd></div></dl></div></article>)}</div>
+  <section class="credit-footnote section-wrap"><h2>A note on reuse</h2><p>Follow the linked license for each photograph, including attribution and share-alike requirements where applicable. These image licenses do not license the RURAL JAPAN name or imply endorsement by the photographers.</p></section>
+</BaseLayout>

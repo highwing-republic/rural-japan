@@ -1,0 +1,41 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Photo from '../components/Photo.astro';
+import { catalog as regions } from '../data/catalog';
+const issueLabel = regions.length === 1 ? 'OUR FIRST DESTINATION / 01' : `DESTINATIONS / ${String(regions.length).padStart(2, '0')}`;
+---
+<BaseLayout title="Take the quieter road" description="Discover a different side of Japan. An independent guide to small villages, forested landscapes and unhurried journeys, by UGATTA." home>
+  <section class="home-hero" id="top" aria-labelledby="hero-heading">
+    <Photo id="river" eager class="hero-photo" sizes="100vw" />
+    <div class="hero-shade"></div>
+    <div class="hero-copy">
+      <p class="eyebrow">BEYOND THE FAMILIAR</p>
+      <h1 id="hero-heading">Take the<br /><em>quieter road.</em></h1>
+      <p>Small villages. Deep forests. A different rhythm.<br />Discover the Japan that invites you to stay a little longer.</p>
+      <a class="button button-cream" href="/places/neba/">Discover Neba <span aria-hidden="true">↗</span></a>
+    </div>
+    <div class="hero-location"><span class="location-dot"></span> NEBA, NAGANO <span class="location-jp" lang="ja">根羽村</span></div>
+    <a class="hero-scroll" href="#introduction">A little further <span aria-hidden="true">↓</span></a>
+    <span class="hero-index" aria-hidden="true">01 / FIELD NOTES</span>
+  </section>
+
+  <section class="intro section-wrap" id="introduction">
+    <p class="eyebrow">THE ART OF GOING SLOWLY</p>
+    <div><h2>There is more to Japan<br />than the <em>well-trodden path.</em></h2><p>Beyond the bright lights, another Japan unfolds. A river beside a village. A tree that has watched centuries pass. A landscape worth taking your time with.</p><p>RURAL JAPAN is an invitation to look a little closer.</p></div>
+    <span class="vertical-note" lang="ja" aria-hidden="true">まだ知らない、日本へ。</span>
+  </section>
+
+  <section class="places section-wrap" id="places" aria-labelledby="places-heading">
+    <div class="section-heading"><div><p class="eyebrow">PLACES WITH A STORY</p><h2 id="places-heading">Start somewhere <em>small.</em></h2></div><span class="issue-label">{issueLabel}</span></div>
+    {regions.map((region) => <article class="destination">
+      <div class="destination-image"><Photo id={region.cardImage} caption={region.cardCaption} /><span class="image-badge">THE VILLAGE COLLECTION</span></div>
+      <div class="destination-copy"><div class="destination-meta"><span>{region.prefecture.toUpperCase()} PREFECTURE</span><span>NO. {region.number}</span></div><p class="destination-jp" lang="ja">{region.japaneseName}</p><h3>{region.name}<span>, {region.prefecture}</span></h3><p class="destination-deck">{region.cardHeading}</p><p>{region.cardDescription}</p><div class="tags">{region.themes.map(theme => <span>{theme.toUpperCase()}</span>)}</div><a class="text-link" href={`/places/${region.slug}/`}>Explore {region.name}<span aria-hidden="true">↗</span></a></div>
+    </article>)}
+  </section>
+
+  <section class="slow-section">
+    <div class="slow-copy"><p class="eyebrow">LESS RUSH. MORE WONDER.</p><h2>A place is more<br />than a <em>pin on a map.</em></h2><p>Take a detour. Read the landscape. Leave time for the things you didn’t come looking for.</p><a class="text-link" href="/about/">The story behind RURAL JAPAN <span aria-hidden="true">↗</span></a></div>
+    <Photo id="cedar" caption="Look a little closer · Neba, Nagano" />
+  </section>
+  <section class="endnote section-wrap"><span class="eyebrow">A JOURNEY, JUST BEGINNING</span><p>One village at a time.<br /><em>More of rural Japan to come.</em></p><a class="round-link" href="/places/neba/" aria-label="Read the Neba village guide">↗</a></section>
+</BaseLayout>

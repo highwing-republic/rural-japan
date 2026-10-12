@@ -1,0 +1,21 @@
+---
+import photos from '../data/photos.json';
+interface Props {
+  id: string;
+  class?: string;
+  eager?: boolean;
+  caption?: string;
+  sizes?: string;
+}
+const { id, class: className = '', eager = false, caption, sizes = '(max-width: 760px) 100vw, 55vw' } = Astro.props;
+const photo = photos.find((item) => item.id === id);
+if (!photo) throw new Error(`Unknown photo: ${id}`);
+---
+<figure class:list={['photo', className]}>
+  <img src={photo.src} srcset={`${photo.srcSmall} 800w, ${photo.src} ${photo.width}w`} sizes={sizes} alt={photo.alt} width={photo.width} height={photo.height}
+    loading={eager ? 'eager' : 'lazy'} fetchpriority={eager ? 'high' : 'auto'} decoding="async" />
+  <figcaption>
+    {caption && <span>{caption}</span>}
+    <a href={`/credits/#${id}`}>Photo: {photo.author} <span aria-hidden="true">↗</span></a>
+  </figcaption>
+</figure>

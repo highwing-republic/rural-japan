@@ -1,0 +1,9 @@
+---
+import RegionLayout from '../../layouts/RegionLayout.astro';
+import { catalog as regions } from '../../data/catalog';
+export function getStaticPaths() {
+  return regions.map((region) => ({ params: { slug: region.slug }, props: { region } }));
+}
+const { region } = Astro.props;
+---
+<RegionLayout region={region} />

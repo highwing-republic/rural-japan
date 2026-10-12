@@ -1,0 +1,41 @@
+---
+import BaseLayout from './BaseLayout.astro';
+import Photo from '../components/Photo.astro';
+import GuideCard from '../components/GuideCard.astro';
+import type { Region } from '../data/regions';
+import { getRegionGuidePages } from '../data/guide-pages';
+interface Props { region: Region }
+const { region } = Astro.props;
+const checkedOn = new Date(`${region.informationCheckedOn}T00:00:00Z`).toLocaleDateString('en-GB', { day: 'numeric', month: 'long', year: 'numeric', timeZone: 'UTC' });
+const guidePages = getRegionGuidePages(region);
+const guidePageBySection = Object.fromEntries(guidePages.filter(page => page.kind === 'directory').map(page => [page.section.id, page.slug]));
+---
+<BaseLayout title={`${region.name}, ${region.prefecture}`} description={region.introduction}>
+  <section class="region-opening section-wrap" id="top">
+    <a class="back-link" href="/#places">← All places</a>
+    <div class="region-title"><div><p class="eyebrow">THE VILLAGE COLLECTION / NO. {region.number}</p><h1>{region.name}<em>, {region.prefecture}</em></h1></div><span lang="ja">{region.japaneseName}</span></div>
+    <div class="region-subtitle"><p>{region.title}</p><span>{region.themes.join(' · ').toUpperCase()}</span></div>
+  </section>
+  <div class="region-hero"><Photo id={region.hero} eager sizes="100vw" caption={`${region.name}, ${region.prefecture} · A quieter corner of Japan`} /></div>
+  <section class="region-intro section-wrap"><p class="eyebrow">MEET {region.name.toUpperCase()}</p><div><h2>Room to breathe.<br /><em>Time to notice.</em></h2><p>{region.introduction}</p></div></section>
+  <nav class="chapter-nav section-wrap" aria-label="In this guide"><span>IN THIS FIELD GUIDE</span>{region.chapters.map((chapter) => <a href={`#${chapter.id}`}>{chapter.navLabel} <span aria-hidden="true">↓</span></a>)}<a href="#guide">VILLAGE GUIDE ↓</a><a href="#access">GETTING THERE ↓</a></nav>
+  <div class="chapters section-wrap">
+    {region.chapters.map((chapter, i) => <section id={chapter.id} class:list={['chapter', { reverse: i % 2 !== 0 }]} aria-labelledby={`${chapter.id}-title`}><Photo id={chapter.image} caption={chapter.caption} /><div class="chapter-copy"><p class="eyebrow">{chapter.label}</p><h2 id={`${chapter.id}-title`}>{chapter.title}</h2><p>{chapter.body}</p></div></section>)}
+  </div>
+  <section class="village-guide" id="guide" aria-labelledby="guide-heading">
+    <div class="section-wrap">
+      <header class="guide-opening"><p class="eyebrow">THE PRACTICAL NEBA GUIDE</p><h2 id="guide-heading">Make a day of it.<br /><em>Stay for the quiet.</em></h2><p>Beyond its great cedar, Neba has valleys, mountain water, local cooking and small businesses worth seeking out. This independent English guide brings the village tourism association’s main visitor categories into one place.</p></header>
+      {region.guideSections.map((section) => <section id={section.id} class="guide-section" aria-labelledby={`${section.id}-heading`}>
+        <header><p class="eyebrow">{section.label}</p><h2 id={`${section.id}-heading`}>{section.title}</h2><div><p>{section.introduction}</p><a class="section-page-link" href={`/places/${region.slug}/${guidePageBySection[section.id]}/`}>Open this guide <span aria-hidden="true">↗</span></a></div></header>
+        <div class="guide-grid">{section.items.map((item, i) => <GuideCard item={item} index={i} />)}</div>
+      </section>)}
+    </div>
+  </section>
+  <section class="specialties-section section-wrap" id="specialties" aria-labelledby="specialties-heading">
+    <div class="specialties-lead"><p class="eyebrow">TASTE OF THE MOUNTAINS</p><h2 id="specialties-heading">What Neba<br /><em>grows & makes.</em></h2><p>Forests cover much of the village, and the headwaters of the Yahagi River begin in this landscape. Local produce reflects clean water, mountain air and marked shifts in temperature.</p><a class="section-page-link" href={`/places/${region.slug}/products/`}>Explore local products <span aria-hidden="true">↗</span></a></div>
+    <div class="specialty-list">{region.specialties.map((item, i) => <article><span>{String(i + 1).padStart(2, '0')}</span><div><p lang="ja">{item.japaneseName}</p><h3>{item.name}</h3><p>{item.description}</p>{item.whereToFind && <p class="where-to-find"><strong>Where to find it</strong>{item.whereToFind}</p>}</div></article>)}</div>
+  </section>
+  <section class="access-section" id="access" aria-labelledby="access-heading"><div class="section-wrap"><header><p class="eyebrow">GETTING TO NEBA</p><h2 id="access-heading">Take the road<br /><em>into the mountains.</em></h2><p>{region.accessNote}</p></header><div class="route-grid">{region.accessRoutes.map(route => <article><p>{route.origin}</p><strong>{route.duration}</strong><span>{route.route}</span></article>)}</div><a class="text-link" href={`/places/${region.slug}/access/`}>Plan your route <span aria-hidden="true">↗</span></a></div></section>
+  <section class="visit-section" id="visit"><div class="section-wrap"><div class="section-heading"><div><p class="eyebrow">A FEW THINGS BEFORE YOU GO</p><h2>Come with <em>curiosity.</em></h2></div><span lang="ja" class="visit-jp">{region.welcome}</span></div><div class="travel-notes">{region.travelNotes.map((note, i) => <article><span class="note-number">{String(i + 1).padStart(2, '0')}</span><h3>{note.title}</h3><p>{note.body}</p></article>)}</div><a class="button button-cream" href={region.visitorUrl}>{region.visitorLabel} <span aria-hidden="true">↗</span></a></div></section>
+  <section class="source-notes section-wrap"><details><summary>Sources & editorial notes <span aria-hidden="true">＋</span></summary><p>This is an independent English-language guide written by RURAL JAPAN from factual information published by Neba Village and the Neba Tourism Association; it is not an official translation. Names are romanized for international visitors, and descriptions have been newly written for this edition. Opening hours, prices, transport, services and seasonal conditions can change—confirm details directly before travel.</p><p class="checked-on">Information checked on <time datetime={region.informationCheckedOn}>{checkedOn}</time>.</p><ul>{region.sources.map(source => <li><a href={source.url}>{source.label} ↗</a></li>)}</ul><p>Photography shows {region.name}; the source, author, license and edit history of each image are recorded on the <a href="/credits/">photography credits page →</a></p></details></section>
+</BaseLayout>

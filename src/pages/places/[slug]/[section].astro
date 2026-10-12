@@ -1,0 +1,15 @@
+---
+import GuidePageLayout from '../../../layouts/GuidePageLayout.astro';
+import { catalog } from '../../../data/catalog';
+import { getRegionGuidePages } from '../../../data/guide-pages';
+
+export function getStaticPaths() {
+  return catalog.flatMap(region => getRegionGuidePages(region).map(page => ({
+    params: { slug: region.slug, section: page.slug },
+    props: { region, page },
+  })));
+}
+
+const { region, page } = Astro.props;
+---
+<GuidePageLayout region={region} page={page} />

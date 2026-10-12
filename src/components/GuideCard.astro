@@ -1,0 +1,24 @@
+---
+import type { GuideItem } from '../data/regions';
+
+interface Props { item: GuideItem; index: number }
+const { item, index } = Astro.props;
+const phoneHref = item.phone ? `tel:${item.phone.replace(/[\s-]/g, '')}` : undefined;
+const hasFacts = item.season || item.hours || item.closed || item.phone || item.amenities;
+---
+<article class="guide-card">
+  <div class="guide-card-number">{String(index + 1).padStart(2, '0')}</div>
+  <p class="guide-type">{item.type}</p>
+  <h3>{item.name}</h3>
+  <p class="guide-japanese" lang="ja">{item.japaneseName}</p>
+  <p class="guide-description">{item.description}</p>
+  {item.address && <address>{item.address}</address>}
+  {hasFacts && <dl class="guide-facts">
+    {item.season && <div><dt>Season</dt><dd>{item.season}</dd></div>}
+    {item.hours && <div><dt>Hours</dt><dd>{item.hours}</dd></div>}
+    {item.closed && <div><dt>Closed</dt><dd>{item.closed}</dd></div>}
+    {item.phone && <div><dt>Phone</dt><dd><a href={phoneHref}>{item.phone}</a></dd></div>}
+    {item.amenities && <div><dt>Facilities</dt><dd>{item.amenities}</dd></div>}
+  </dl>}
+  <a href={item.url} aria-label={`${item.name} on the Neba Tourism Association website`}>Official listing <span aria-hidden="true">↗</span></a>
+</article>
