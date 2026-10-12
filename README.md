@@ -2,7 +2,7 @@
 
 UGATTAによる訪日外国人向け地方観光メディアのデザイントライアル。英語トップ、長野県根羽村の紹介、About、画像クレジットを実装しています。
 
-**ローカル確認用です。DNS、GitHub Pages、ホスティング、UGATTA公式サイトは変更していません。** 将来のURLは `https://rural.ugatta-llc.com/`。現時点では公開設定・canonical・サイトマップを追加していません。
+公開URLは `https://rural.ugatta-llc.com/`。`main` への push で GitHub Actions（`.github/workflows/deploy-pages.yml`）が `public` モードをビルドし、GitHub Pages（カスタムドメイン `rural.ugatta-llc.com`）へ配信します。DNS は `rural` の CNAME を `highwing-republic.github.io` に向ける必要があります（ゾーン `ugatta-llc.com`、Google Cloud DNS）。UGATTA公式サイトは変更していません。
 
 ## 起動
 
@@ -130,7 +130,7 @@ npm run preview
 
 詳細は [Phase 1引き継ぎと公開前確認](docs/PHASE1-HANDOFF.md) を参照してください。
 
-- DNS、公開環境、GitHub Pages、UGATTA公式サイトからの導線。
+- DNS の CNAME 登録と HTTPS 強制の有効化、UGATTA公式サイトからの導線。
 - 観光協会からの掲載許諾と写真差し替え、英語表現・現地情報の最終確認。
 - 予約、アフィリエイト、検索、CMS、解析、問い合わせフォーム。
 - SEO詳細、構造化データ、OG画像、canonical、サイトマップ。
